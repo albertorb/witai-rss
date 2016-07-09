@@ -44,10 +44,6 @@ def get_url_feed(request):
             if name == row['name']:
                 url = row['url']
                 break
-    r = [item for item in feedparser.parse(url)['items']]
-    for item in r:
-        print(item)
-    return context
     context['feed'] = '\n'.join([item['title'] for item in feedparser.parse(url)['items']])
     return context
 
