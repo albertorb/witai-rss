@@ -30,6 +30,19 @@ def send(request, response):
     print(str(response['text']))
 
 
+def get_body(request):
+    """
+    Return the body of a concrete publication.
+    """
+    context = request['context']
+    entities = request['entities']
+    feed = context['feed']
+    ordinal = entities['ordinal'][0]['value']
+    body = feed[ordinal]['summary_detail']['value']
+    context['body'] = body
+    return context
+
+
 def get_url_feed(request):
     """
     Return last item titles for the requested url
@@ -44,7 +57,8 @@ def get_url_feed(request):
             if name == row['name']:
                 url = row['url']
                 break
-    context['feed'] = '\n'.join([item['title'] for item in feedparser.parse(url)['items']])
+    context['feed'] = [item for item in feedparser.parse(url)['items']]
+    context['titles'] = '\n'.join([item['title_detail']['value'] for item in context['feed']])
     return context
 
 def update_list(request):
@@ -64,6 +78,7 @@ def update_list(request):
 actions = {
     'say': say,
     'send': send,
+    'get_body': get_body,
     'get_url_feed': get_url_feed,
     'update_list': update_list,
 }
